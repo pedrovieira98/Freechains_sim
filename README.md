@@ -13,13 +13,13 @@ A intenção é a de simular um fórum de séries, onde os usuários irão inter
 
 ## Usuários e suas Atividades
 
-**Pioneiro**: Criador do fórum e principal mantenedor
+**Pioneiro**: Criador do fórum e principal mantenedor.
 
-**Ativo 1**:
+**Ativo 1**: Usuário muito ativo na comunidade, gosta de postar e ler todas as publicações.
 
-**Ativo 2**:
+**Ativo 2**: Usuário muito ativo, prefere ler do que comentar, porém está sempre visualizando e dando sua opinião por likes e deslikes em todos os posts.
 
-**Troll**: Usuário com o intuito de que o fórum não funcione de maneira adequada
+**Troll**: Usuário com o intuito de que o fórum não funcione de maneira adequada.
 
 **Newbie**: Usuário novo e com pouca atividade, ainda aprendendo sobre os assuntos.
 
