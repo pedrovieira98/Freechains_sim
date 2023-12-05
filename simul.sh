@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #Pega tempo atual
 time = $freechains-host now
