@@ -4,24 +4,6 @@
 time = $freechains-host now
 echo $time
 
-#Função para obter reputação
-Reputation(){
-    echo "Reputação do Pioneiro"
-    echo "freechains --host=localhost:"$A" chain '#séries' reps $pioneiro_pub_key"
-
-    echo "Reputação do Ativo1"
-    echo "freechains --host=localhost:"$A" chain '#séries' reps $ativo1_pub_key"
-
-    echo "Reputação do Ativo2"
-    echo "freechains --host=localhost:"$B" chain '#séries' reps $ativo2_pub_key"
-
-    echo "Reputação do Troll"
-    echo "freechains --host=localhost:"$C" chain '#séries' reps $troll_pub_key"
-
-    echo "Reputação do Newbie"
-    echo "freechains --host=localhost:"$B" chain '#séries' reps $newbie_pub_key"
-}
-
 
 #Nó A
 A = "8330"
@@ -119,4 +101,17 @@ freechains --port="$B" chain '#séries' --sign="$ativo2_pri_key" dislike "$troll
 
 # Dia 90 -- Verificação de reputação
 
-Reputation
+    echo "Reputação do Pioneiro"
+    echo "freechains --host=localhost:"$A" chain '#séries' reps $pioneiro_pub_key"
+
+    echo "Reputação do Ativo1"
+    echo "freechains --host=localhost:"$A" chain '#séries' reps $ativo1_pub_key"
+
+    echo "Reputação do Ativo2"
+    echo "freechains --host=localhost:"$B" chain '#séries' reps $ativo2_pub_key"
+
+    echo "Reputação do Troll"
+    echo "freechains --host=localhost:"$C" chain '#séries' reps $troll_pub_key"
+
+    echo "Reputação do Newbie"
+    echo "freechains --host=localhost:"$B" chain '#séries' reps $newbie_pub_key"
