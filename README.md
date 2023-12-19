@@ -40,8 +40,9 @@ O usuário *Pioneiro* cria o fórum e compartilha com *Ativo 1* e então *Pionei
 
 ## Reação dos Autores
 
-
+Os autores com maior recorrência de participação irão trocar likes entre si (Pioneiro, Ativo1 e Ativo2), enquanto o newbie postará com menor frequência, sendo mais um observador. O troll, por sua vez, fará uma postagem a qual os membros do grupo não gostarão, portanto, ganhará muitos dislikes e não conseguirá postar mais nenhuma mensagem.
 
 ## Conclusão
 
+Ao finalizar, conclui-se que o protocolo Freechains é capaz de criar um sistema de consenso baseado em reputação, onde um membro o qual as postagens não são compatíveis com o foco do grupo, terá sua mensagem excluída da cadeia e os outros poderão postar baseado em sua reputação no momento (verificando se a mensagem será bloqueada diretamente, a ver se o membro possui reputação suficiente, ou se será incluída na cadeia, passando pelo critério dos demais membros).
 
