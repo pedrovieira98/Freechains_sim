@@ -90,49 +90,53 @@ do
 
 	# Pioneiro
 	if [ $(($i % 1)) -eq 0 ]; then
-		pioneiro_post=$(freechains --port="$A" chain '#series' post inline 'Chat de séries' --sign=$pioneiro_pri_key)
+		pioneiro_post=$(freechains --port="$A" chain '#series' post inline 'Chat de séries' --sign="$pioneiro_pri_key")
+		freechains --port="$A" chain '#series' post inline 'Chat de séries' --sign="$pioneiro_pri_key"
 
-		if [ "$(freechains chain --port="$A" '#series' reps '$pioneiro_pub_key')" -gt 4 ] && [ $i -gt 1 ]; then
-			echo "teste"
-			freechains chain '#series' --port="$A" like '$ativo1_post' --sign=$pioneiro_pri_key
-			freechains chain '#series' --port="$A" like '$ativo2_post' --sign=$pioneiro_pri_key
-			freechains chain '#series' --port="$A" dislike '$troll_post' --sign=$pioneiro_pri_key
+
+		if [ "$(freechains chain --port="$A" '#series' reps '$pioneiro_pub_key')" -gt 4 ] && [ $i -gt 2 ]; then
+			freechains chain '#series' --port="$A" like '$ativo1_post' --sign="$pioneiro_pri_key"
+			freechains chain '#series' --port="$A" like '$ativo2_post' --sign="$pioneiro_pri_key"
+			freechains chain '#series' --port="$A" dislike '$troll_post' --sign="$pioneiro_pri_key"
 		fi
 	fi
 
 	# Ativo1
 	if [ $(($i % 2)) -eq 0 ]; then
-		ativo1_post=$(freechains --port="$A" chain '#series' post inline 'Gosto de séries' --sign=$ativo1_pri_key)
+		ativo1_post=$(freechains --port="$A" chain '#series' post inline 'Gosto de séries' --sign="$ativo1_pri_key")
+		freechains --port="$A" chain '#series' post inline 'Gosto de séries' --sign="$ativo1_pri_key"
 
-		if [ "$(freechains chain --port="$A" '#series' reps '$ativo1_pub_key')" -gt 5 ] && [ $i -gt 1 ]; then
-			echo "aqui foi"
-			freechains chain '#series' --port="$A" like '$pioneiro_post' --sign=$ativo1_pri_key
-			freechains chain '#series' --port="$A" dislike '$troll_post' --sign=$ativo2_pri_key
+		if [ "$(freechains chain --port="$A" '#series' reps '$ativo1_pub_key')" -gt 5 ] && [ $i -gt 2 ]; then
+			freechains chain '#series' --port="$A" like '$pioneiro_post' --sign="$ativo1_pri_key"
+			freechains chain '#series' --port="$A" dislike '$troll_post' --sign="$ativo2_pri_key"
 		fi
 
 	fi
 
 	# Ativo2 
 	if [ $(($i % 3)) -eq 0 ]; then
-		ativo2_post=$(freechains --port="$B" chain '#series' post inline 'Séries são legais' --sign=$ativo2_pri_key)
+		ativo2_post=$(freechains --port="$B" chain '#series' post inline 'Séries são legais' --sign="$ativo2_pri_key")
+		freechains --port="$B" chain '#series' post inline 'Séries são legais' --sign="$ativo2_pri_key"
 
 		if [ "$(freechains chain --port="$B" '#series' reps '$ativo2_pub_key')" -gt 6 ] && [ $i -gt 1 ]; then
-			echo "aqui tbm foi"
-			freechains chain '#series' --port="$B" like '$ativo1_post' --sign=$ativo2_pri_key
-			freechains chain '#series' --port="$B" like '$newbie_post' --sign=$ativo2_pri_key
-			freechains chain '#series' --port="$B" dislike '$troll_post' --sign=$pioneiro_pri_key
+			freechains chain '#series' --port="$B" like '$ativo1_post' --sign="$ativo2_pri_key"
+			freechains chain '#series' --port="$B" like '$newbie_post' --sign="$ativo2_pri_key"
+			freechains chain '#series' --port="$B" dislike '$troll_post' --sign="$pioneiro_pri_key"
 		fi
 
 	fi
 
 	# Newbie 
-	if [ $(($i % 10)) -eq 0 ]; then
-		newbie_post=$(freechains --port="$B" chain '#series' post inline 'O que estou fazendo aqui?' --sign=$newbie_pri_key)
+	if [ $(($i % 6)) -eq 0 ]; then
+		newbie_post=$(freechains --port="$B" chain '#series' post inline 'O que estou fazendo aqui?' --sign="$newbie_pri_key")
+		freechains --port="$B" chain '#series' post inline 'O que estou fazendo aqui?' --sign="$newbie_pri_key"
 	fi
 
 	# Troll 
-	if [ $(($i % 6)) -eq 0 ]; then
-		troll_post=$(freechains --port="$C" chain '#series' post inline 'Eu sou troll' --sign=$troll_pri_key)
+	if [ $(($i % 2)) -eq 0 ]; then
+		troll_post=$(freechains --port="$C" chain '#series' post inline 'Eu sou troll' --sign="$troll_pri_key")
+		freechains --port="$C" chain '#series' post inline 'Eu sou troll' --sign="$troll_pri_key"
+
 	fi
 
 	Reputation
