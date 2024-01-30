@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm -rf /tmp/var/Freechains/
 
 
@@ -19,20 +21,22 @@ Reputation(){
 }
 
 hosts_date(){
-	freechains-host --port="$A" now "$date"
-	freechains-host --port="$B" now "$date"
-	freechains-host --port="$C" now "$date"
+
+	freechains-host --port="$A" now "$(date -d "$i day" +%s)"
+	freechains-host --port="$B" now "$(date -d "$i day" +%s)"
+	freechains-host --port="$C" now "$(date -d "$i day" +%s)"
 }
 
-hosts_sync(){
-	freechains --host=localhost:"$A" peer localhost:"$B" send '#series'
-	freechains --host=localhost:"$A" peer localhost:"$C" send '#series'
-	freechains --host=localhost:"$B" peer localhost:"$A" send '#series'
-	freechains --host=localhost:"$B" peer localhost:"$C" send '#series'
-	freechains --host=localhost:"$C" peer localhost:"$A" send '#series'
-	freechains --host=localhost:"$C" peer localhost:"$B" send '#series'
-}
+sync_all(){
+	freechains --port="$A" peer localhost:"$B" send '#series'
+	freechains --port="$B" peer localhost:"$A" send '#series'
 
+	freechains --port="$A" peer localhost:"$C" send '#series'
+	freechains --port="$C" peer localhost:"$A" send '#series'
+
+	freechains --port="$C" peer localhost:"$B" send '#series'
+	freechains --port="$B" peer localhost:"$C" send '#series'
+}
 
 A="9050"
 Caminho_A="/tmp/var/Freechains/myhosta/"
@@ -47,7 +51,7 @@ C="9052"
 Caminho_C="/tmp/var/Freechains/myhostc/"
 gnome-terminal -- freechains-host --port="$C" start $Caminho_C
 
-#Criação do Pioneiro
+#CriaÃ§Ã£o do Pioneiro
 pioneiro_chave=$(freechains --port="$A" keys pubpvt 'chave-do-pioneiro')
 pioneiro_pub_key=$(echo $pioneiro_chave | cut -d' ' -f1)
 echo "$pioneiro_pub_key"
@@ -74,131 +78,62 @@ newbie_chave=$(freechains --port="$B" keys pubpvt 'chave-do-newbie')
 newbie_pub_key=$(echo $newbie_chave | cut -d' ' -f1)
 newbie_pri_key=$(echo $newbie_chave | cut -d' ' -f2)
 
-# Dia 1 -- Criação do fórum e primeiro post pelo pioneiro --
-echo "epoch dia 1"
-date="2023-10-01 00:00:00.000"
-hosts_date
-
-#Criação do fórum
-echo "fórum criado"
 freechains --port="$A" chains join '#series' "$pioneiro_pub_key"
 freechains --port="$B" chains join '#series' "$pioneiro_pub_key"
 freechains --port="$C" chains join '#series' "$pioneiro_pub_key"
 
-#Primeiro post pelo Pioneiro explicando ideia do Fórum
-pioneiro_post1=$(freechains --port="$A" chain '#series' post inline "Este Ã© um fÃ³rum para conversas e indicaÃ§Ãµes de series" --sign="$pioneiro_pri_key")
+for (( i = 0; i < 90; i++ ))
+do
+	echo "Começo do dia $i"
+	hosts_date
+	sync_all
 
-Reputation
-hosts_sync
+	# Pioneiro
+	if [ $(($i % 1)) = 0 ]; then
+		pioneiro_post=$(freechains --port="$A" chain '#series' post inline "Chat de séries" --sign="$pioneiro_pri_key")
 
-#Dia 5 -- Entrada dos membros Ativos no fórum --
-echo "epoch dia 5"
-date="2023-10-05 00:00:00.000"
-hosts_date
-hosts_sync
+		if [ $( freechains chain '#series' --port="$A" reps '$pioneiro_pub_key' ) -gt 4 ] && [ $i > 0 ]; then
+			freechains chain '#series' --port="$A" like $ativo1_post --sign="$pioneiro_pri_key"
+			freechains chain '#series' --port="$A" like $ativo2_post --sign="$pioneiro_pri_key"
+			freechains chain '#series' --port="$A" dislike $troll_post --sign="$pioneiro_pri_key"
+		fi
+	fi
 
-#Ativo1 se junta e decide postar (está no mesmo nó que o pioneiro)
-ativo1_post1=$(freechains --port="$A" chain '#series' post inline "Gosto muito de series" --sign="$ativo1_pri_key")
-echo "$ativo1_post1"
-freechains --port="$A" chain "#series" consensus
+	# Ativo1
+	if [ $(($i % 2)) = 0 ]; then
+		ativo1_post=$(freechains --port="$A" chain '#series' post inline "Gosto de séries" --sign="$ativo1_pri_key")
 
-#Ativo2 e Newbie se juntam ao fórum de series
+		if [ $( freechains chain '#series' --port="$A" reps '$ativo1_pub_key' )  -gt 5 ] && [ $i > 0 ]; then
+			freechains chain '#series' --port="$A" like $pioneiro_post --sign="$ativo1_pri_key"
+			freechains chain '#series' --port="$A" dislike $troll_post --sign="$ativo2_pri_key"
+		fi
 
-#Pioneiro dá like no post de Ativo1
-freechains --port="$A" chain '#series' --sign="$pioneiro_pri_key" like "$ativo1_post1"
+	fi
 
-Reputation
-hosts_sync
+	# Ativo2 
+	if [ $(($i % 3)) = 0 ]; then
+		ativo2_post=$(freechains --port="$B" chain '#series' post inline "Séries são legais" --sign="$ativo2_pri_key")
 
-# Dia 10 -- Ativo2 faz um post e Ativo1 faz outro post --
-echo "epoch dia 10"
-date="2023-10-10 00:00:00.000"
-hosts_date
-hosts_sync
+		if [ $( freechains chain '#series' --port="$B" reps '$ativo2_pub_key' ) -gt 6 ] && [ $i > 0 ]; then
+			freechains chain '#series' --port="$B" like $ativo1_post --sign="$ativo2_pri_key"
+			freechains chain '#series' --port="$B" like $newbie_post --sign="$ativo2_pri_key"
+			freechains chain '#series' --port="$B" dislike $troll_post --sign="$pioneiro_pri_key"
+		fi
 
-ativo2_post1=$(freechains --port="$B" chain '#series' post inline "Minha série favorita é The Walking Dead" --sign="$ativo2_pri_key")
-ativo1_post2=$(freechains --port="$A" chain '#series' post inline "Gosto de series de fantasia" --sign="$ativo1_pri_key")
+	fi
 
-echo "$ativo1_post2"
-echo "$ativo2_post1"
+	# Newbie 
+	if [ $(($i % 10)) = 0 ]; then
+		newbie_post=$(freechains --port="$B" chain '#series' post inline "O que estou fazendo aqui?" --sign="$newbie_pri_key")
+	fi
 
-Reputation
-hosts_sync
+	# Troll 
+	if [ $(($i % 6)) = 0 ]; then
+		troll_post=$(freechains --port="$C" chain '#series' post inline "Eu sou troll" --sign="$troll_pri_key")
+	fi
 
-#Dia 15 -- Pioneiro da like no post 2 de Ativo1 e no post de Ativo2 --
-echo "epoch dia 15"
-date="2023-10-15 00:00:00.000"
-hosts_date
-hosts_sync
+	Reputation
 
-freechains --port="$A" chain '#series' consensus
-freechains --port="$A" chain '#series' --sign="$pioneiro_pri_key" like "$ativo1_post2"
+done
 
-Reputation
-hosts_sync
-
-# Dia 20 -- Ativo1 e pioneiro dão like no post de Ativo2 --
-echo "epoch dia 20"
-date="2023-10-20 00:00:00.000"
-hosts_date
-hosts_sync
-
-echo "aqui 0"
-freechains --port="$A" chain '#series' --sign="$pioneiro_pri_key" like "$ativo2_post1"
-echo "aqui"
-freechains --port="$A" chain '#series' --sign="$ativo1_pri_key" like "$ativo2_post1"
-echo "aqui 1"
-
-hosts_sync
-Reputation
-
-# Dia 30 -- Entrada do troll no fórum e like de Ativo2 no post de Ativo1 -- 
-echo "epoch dia 30"
-date="2023-10-30 00:00:00.000"
-hosts_date
-hosts_sync
-
-freechains --port="$B" chain '#series' --sign="$ativo2_pri_key" like "$ativo1_post2"
-
-Reputation
-hosts_sync
-
-# Dia 40 -- Post do troll --
-echo "epoch dia 40"
-date="2023-10-40 00:00:00.000"
-hosts_date
-hosts_sync
-
-troll_post1=$(freechains --port="$C" chain '#series' post inline "Filmes são muito mais legais" --sign="$troll_pri_key")
-
-
-Reputation
-hosts_sync
-
-# Dia 50 -- Dislikes no post do troll
-echo "epoch dia 50"
-date="2023-11-09 00:00:00.000"
-hosts_date
-hosts_sync
-
-Reputation
-freechains --port="$A" chain '#series' --sign="$pioneiro_pri_key" dislike "$troll_post1"
-freechains --port="$A" chain '#series' --sign="$ativo1_pri_key" dislike "$troll_post1"
-freechains --port="$B" chain '#series' --sign="$ativo2_pri_key" dislike "$troll_post1"
-
-hosts_sync
-Reputation
-
-#Dia 51 -- Ver rep do Troll
-echo "epoch dia 51"
-date="2023-11-10 00:00:00.000"
-hosts_sync
-Reputation
-
-
-# Dia 90 -- Verificação de reputação
-echo "epoch dia 90"
-date="2023-12-31 00:00:00.000"
-hosts_date
-hosts_sync
-Reputation
+echo "Terminada a simulação"
